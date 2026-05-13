@@ -8,7 +8,7 @@ import { EmptyState } from '@/shared/components/EmptyState'
 import { useProducts, useCategories, useCreateProduct, useUpdateProduct, useDeleteProduct } from '@/features/inventory/hooks/useProducts'
 import { formatCurrency } from '@/shared/utils'
 import type { Product } from '@/shared/types'
-import { useForm } from 'react-hook-form'
+import { useForm, type SubmitHandler, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { LoadingSpinner } from '@/shared/components/LoadingStates'
@@ -43,8 +43,19 @@ export function InventoryPage() {
   const deleteProduct = useDeleteProduct()
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ProductFormData>({
-    resolver: zodResolver(productSchema),
-    defaultValues: { isActive: true, lowStockThreshold: 10 },
+    resolver: zodResolver(productSchema) as Resolver<ProductFormData>,
+    defaultValues: {
+      name: '',
+      sku: '',
+      categoryId: '',
+      category: '',
+      price: 0,
+      costPrice: 0,
+      quantity: 0,
+      lowStockThreshold: 10,
+      isActive: true,
+      description: '',
+    },
   })
 
   const openCreate = () => {
@@ -63,7 +74,7 @@ export function InventoryPage() {
     setModalOpen(true)
   }
 
-  const onSubmit = async (data: ProductFormData) => {
+  const onSubmit: SubmitHandler<ProductFormData> = async (data) => {
     const cat = categories?.find(c => c.id === data.categoryId)
     const payload = { ...data, category: cat?.name ?? data.categoryId, imageUrl: undefined }
     if (editProduct) {
@@ -197,7 +208,7 @@ export function InventoryPage() {
               Cancel
             </button>
             <button
-              onClick={handleSubmit(onSubmit)}
+              onClick={() => handleSubmit(onSubmit)()}
               disabled={createProduct.isPending || updateProduct.isPending}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-60 text-white text-sm font-semibold rounded-xl transition-all"
             >
@@ -229,22 +240,22 @@ export function InventoryPage() {
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Selling Price *</label>
-              <input {...register('price')} type="number" step="0.01" placeholder="0.00" className="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-white" />
+              <input {...register('price', { valueAsNumber: true })} type="number" step="0.01" placeholder="0.00" className="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-white" />
               {errors.price && <p className="text-xs text-red-500">{errors.price.message}</p>}
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Cost Price *</label>
-              <input {...register('costPrice')} type="number" step="0.01" placeholder="0.00" className="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-white" />
+              <input {...register('costPrice', { valueAsNumber: true })} type="number" step="0.01" placeholder="0.00" className="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-white" />
               {errors.costPrice && <p className="text-xs text-red-500">{errors.costPrice.message}</p>}
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Stock Qty *</label>
-              <input {...register('quantity')} type="number" placeholder="0" className="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-white" />
+              <input {...register('quantity', { valueAsNumber: true })} type="number" placeholder="0" className="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-white" />
               {errors.quantity && <p className="text-xs text-red-500">{errors.quantity.message}</p>}
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Low Stock Alert</label>
-              <input {...register('lowStockThreshold')} type="number" placeholder="10" className="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-white" />
+              <input {...register('lowStockThreshold', { valueAsNumber: true })} type="number" placeholder="10" className="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-white" />
             </div>
             <div className="col-span-2 space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Description</label>

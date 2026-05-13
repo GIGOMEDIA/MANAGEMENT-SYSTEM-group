@@ -86,7 +86,7 @@ export function DashboardPage() {
                 <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} />
                 <Tooltip
                   contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '12px', color: '#f1f5f9' }}
-                  formatter={(v: number) => [formatCurrency(v), '']}
+                  formatter={(v: any) => [formatCurrency(Number(v)), '']}
                 />
                 <Legend iconType="circle" iconSize={8} />
                 <Area type="monotone" dataKey="revenue" name="Revenue" stroke="#3b82f6" strokeWidth={2} fill="url(#revenue)" />
