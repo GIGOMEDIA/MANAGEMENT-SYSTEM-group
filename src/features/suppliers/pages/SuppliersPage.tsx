@@ -22,7 +22,7 @@ const supplierSchema = z.object({
   country: z.string().min(2, 'Country required'),
   taxId: z.string().optional(),
   paymentTerms: z.string().optional(),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean(),
 })
 
 type SupplierForm = z.infer<typeof supplierSchema>

@@ -16,7 +16,7 @@ const userSchema = z.object({
   name: z.string().min(2, 'Name required'),
   email: z.string().email('Valid email required'),
   role: z.enum(['admin', 'manager', 'staff']),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean(),
 })
 
 type UserForm = z.infer<typeof userSchema>
