@@ -18,12 +18,12 @@ const productSchema = z.object({
   sku: z.string().min(2, 'SKU required'),
   categoryId: z.string().min(1, 'Category required'),
   category: z.string(),
-  price: z.coerce.number().positive('Price must be positive'),
-  costPrice: z.coerce.number().positive('Cost must be positive'),
+  price: z.coerce.number().min(0.01, 'Price must be positive'),
+  costPrice: z.coerce.number().min(0.01, 'Cost must be positive'),
   quantity: z.coerce.number().int().min(0, 'Quantity must be >= 0'),
   lowStockThreshold: z.coerce.number().int().min(1),
   description: z.string().optional(),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean(),
 })
 
 type ProductFormData = z.infer<typeof productSchema>
